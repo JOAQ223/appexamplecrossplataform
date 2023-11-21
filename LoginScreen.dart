@@ -114,24 +114,86 @@ class OptionsScreen extends StatelessWidget {
   }
 }
 
-class JoinGroupScreen extends StatelessWidget {
+class JoinGroupScreen extends StatefulWidget {
   final List<Group> groups;
 
   JoinGroupScreen({required this.groups});
 
   @override
+  _JoinGroupScreenState createState() => _JoinGroupScreenState();
+}
+
+class _JoinGroupScreenState extends State<JoinGroupScreen> {
+  late List<Group> filteredGroups;
+
+  @override
+  void initState() {
+    super.initState();
+    filteredGroups = widget.groups;
+  }
+
+  void _filterGroups(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        filteredGroups = widget.groups;
+      });
+    } else {
+      setState(() {
+        filteredGroups = widget.groups
+            .where((group) =>
+                group.name.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      });
+    }
+  }
+
+  void _showJoinDialog(BuildContext context, String groupName) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Join Group'),
+          content: Text('Are you sure you want to join the group: $groupName?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Join'),
+              onPressed: () {
+                // Handle the join group logic here
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Join a Group')),
+      appBar: AppBar(
+        title: TextField(
+          decoration: InputDecoration(
+            hintText: 'Search Group',
+            hintStyle: TextStyle(color: Colors.white),
+          ),
+          style: TextStyle(color: Colors.white),
+          onChanged: _filterGroups,
+        ),
+      ),
       body: ListView.builder(
-        itemCount: groups.length,
+        itemCount: filteredGroups.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(groups[index].name),
-            subtitle: Text('Admin: ${groups[index].administrator}'),
-            onTap: () {
-              // Handle group selection logic here
-            },
+            title: Text(filteredGroups[index].name),
+            subtitle: Text('Admin: ${filteredGroups[index].administrator}'),
+            onTap: () => _showJoinDialog(context, filteredGroups[index].name),
           );
         },
       ),
