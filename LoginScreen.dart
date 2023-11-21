@@ -17,26 +17,35 @@ class Member {
   Member({required this.name, required this.email});
 }
 
-List<Group> groups = [
-  Group(
-    name: 'Rock Band',
-    administrator: 'John Doe (john@rockband.com)',
-    members: [
-      Member(name: 'John Doe', email: 'john@rockband.com'),
-      // ... other members
-    ],
-  ),
-  Group(
-    name: 'POP band',
-    administrator: 'Brithney spears (john@rockband.com)',
-    members: [
-      Member(name: 'Dereck dee', email: 'john@rockband.com'),
-      // ... other members
-    ],
-  ),
-];
-
 class OptionsScreen extends StatelessWidget {
+  final List<Group> groups = [
+    Group(
+      name: 'Rock Band',
+      administrator: 'John Doe (john@rockband.com)',
+      members: [
+        Member(name: 'John Doe', email: 'john@rockband.com'),
+        Member(name: 'Ozzy Osburn', email: 'ozzy@idintcare.com'),
+        Member(name: 'Paul Mcartie', email: 'paul@idintcare.com')
+        // ... other members
+      ],
+    ),
+    Group(
+      name: 'POP band',
+      administrator: 'Brithney spears (john@rockband.com)',
+      members: [
+        Member(name: 'Dereck dees', email: 'john@rockband.com'),
+        Member(name: 'Deniis dees', email: 'deniss@thm.de'),
+      ],
+    ),
+    Group(
+      name: 'Wg expensses',
+      administrator: 'Helena Fisher helena@schalgear.de.com)',
+      members: [
+        Member(name: 'Cristian silva ', email: 'cristian.silver@rockband.com'),
+        Member(name: 'Max Muster ', email: 'max,muster@rockband.com'),
+      ],
+    ),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +76,13 @@ class OptionsScreen extends StatelessWidget {
                       child: Text('Join Group'),
                       style: AppStyles.blueButtonStyle, // Use the defined style
                       onPressed: () {
-                        // Handle Join Group action
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                JoinGroupScreen(groups: groups),
+                          ),
+                        );
                       },
                     ),
                   ),
@@ -94,6 +109,31 @@ class OptionsScreen extends StatelessWidget {
           ),
           // Other widgets or content can be added here
         ],
+      ),
+    );
+  }
+}
+
+class JoinGroupScreen extends StatelessWidget {
+  final List<Group> groups;
+
+  JoinGroupScreen({required this.groups});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Join a Group')),
+      body: ListView.builder(
+        itemCount: groups.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(groups[index].name),
+            subtitle: Text('Admin: ${groups[index].administrator}'),
+            onTap: () {
+              // Handle group selection logic here
+            },
+          );
+        },
       ),
     );
   }
